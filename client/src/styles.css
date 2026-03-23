@@ -56,6 +56,37 @@ h6 {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(245, 249, 255, 0.92));
 }
 
+.light .text-white,
+.light .text-slate-100,
+.light .text-slate-200,
+.light .text-slate-300,
+.light .text-slate-400 {
+  color: #152344 !important;
+}
+
+.light .border-slate-700,
+.light .border-slate-600,
+.light .border-slate-500 {
+  border-color: rgba(77, 90, 123, 0.35) !important;
+}
+
+.light .bg-slate-900\/90,
+.light .bg-slate-900\/70,
+.light .bg-slate-900\/60,
+.light .bg-slate-950\/70 {
+  background: rgba(229, 236, 255, 0.8) !important;
+}
+
+.light input,
+.light textarea {
+  color: #152344 !important;
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #4d5a7b !important;
+}
+
 .text-subtle {
   color: var(--text-muted);
 }

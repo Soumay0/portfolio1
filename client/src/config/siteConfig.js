@@ -12,7 +12,7 @@ export const profile = {
   githubUsername: "Soumay0",
   social: {
     github: "https://github.com/Soumay0",
-    linkedin: "https://www.linkedin.com/in/your-profile"
+    linkedin: "https://www.linkedin.com/in/soumaypandey"
   },
   primaryStack: ["React", "Node", "Express", "MongoDB", "Tailwind", "JavaScript"],
   techIcons: ["React", "Node", "Express", "MongoDB", "Tailwind", "JavaScript"],

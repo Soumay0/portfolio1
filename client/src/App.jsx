@@ -12,7 +12,17 @@ import SkeletonCard from "./components/SkeletonCard";
 import TechStackIcons from "./components/TechStackIcons";
 import TypingText from "./components/TypingText";
 import { profile } from "./config/siteConfig";
-import { fetchCertificates, fetchGithubProjects, fetchProjects, sendContactMessage } from "./services/api";
+import { fetchCertificates, fetchProjects, sendContactMessage } from "./services/api";
+
+const allowedProjects = new Set([
+  "medconnect",
+  "medconnect - medical appointment booking website",
+  "cpu schedular simulator",
+  "cpu scheduling simulator",
+  "uniportal",
+  "uni-portal",
+  "student management api"
+]);
 
 function App() {
   const [theme, setTheme] = useState("dark");
@@ -33,19 +43,11 @@ function App() {
     async function loadProjects() {
       setIsProjectsLoading(true);
       try {
-        const [apiProjects, githubProjects] = await Promise.all([
-          fetchProjects(),
-          fetchGithubProjects(profile.githubUsername)
-        ]);
-
-        const merged = [...apiProjects];
-        githubProjects.forEach((repo) => {
-          if (!merged.some((project) => project.title.toLowerCase() === repo.title.toLowerCase())) {
-            merged.push(repo);
-          }
-        });
-
-        setProjects(merged);
+        const apiProjects = await fetchProjects();
+        const curatedProjects = apiProjects.filter((project) =>
+          allowedProjects.has(project.title.toLowerCase())
+        );
+        setProjects(curatedProjects);
       } catch (error) {
         setProjects([]);
       } finally {
