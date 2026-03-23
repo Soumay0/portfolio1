@@ -36,6 +36,13 @@ npm install
 MONGODB_URI=your_mongodb_connection_string
 MONGODB_DB_NAME=portfolio
 PORT=5000
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@example.com
+SMTP_PASS=your-app-password
+EMAIL_FROM=your-email@example.com
+EMAIL_TO=your-email@example.com
 ```
 
 3. Run frontend + backend together:
@@ -63,6 +70,13 @@ npm run build
 4. Ensure environment variables are configured in Vercel:
    - `MONGODB_URI`
    - `MONGODB_DB_NAME`
+   - `SMTP_HOST`
+   - `SMTP_PORT`
+   - `SMTP_SECURE`
+   - `SMTP_USER`
+   - `SMTP_PASS`
+   - `EMAIL_FROM`
+   - `EMAIL_TO`
 5. Deploy.
 
 `vercel.json` is already configured for static frontend + serverless API routing.

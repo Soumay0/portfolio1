@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Card from "./Card";
 
 function CertificateCard({ certificate, onOpen }) {
@@ -20,4 +21,4 @@ function CertificateCard({ certificate, onOpen }) {
   );
 }
 
-export default CertificateCard;
+export default memo(CertificateCard);

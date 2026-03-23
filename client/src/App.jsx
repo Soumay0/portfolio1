@@ -1,18 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 import Card from "./components/Card";
 import CertificateCard from "./components/CertificateCard";
+import CustomCursor from "./components/CustomCursor";
 import Footer from "./components/Footer";
 import Modal from "./components/Modal";
 import Navbar from "./components/Navbar";
 import ProjectCard from "./components/ProjectCard";
+import ProjectDetailsModal from "./components/ProjectDetailsModal";
+import ScrollProgress from "./components/ScrollProgress";
 import SectionHeading from "./components/SectionHeading";
 import SkeletonCard from "./components/SkeletonCard";
 import TechStackIcons from "./components/TechStackIcons";
+import Toast from "./components/Toast";
 import TypingText from "./components/TypingText";
 import { profile } from "./config/siteConfig";
-import { fetchCertificates, fetchProjects, sendContactMessage } from "./services/api";
+import { fetchCertificates, fetchGithubLatestRepos, fetchProjects, sendContactMessage } from "./services/api";
 
 const allowedProjects = new Set([
   "medconnect",
@@ -27,17 +31,31 @@ const allowedProjects = new Set([
 function App() {
   const [theme, setTheme] = useState("dark");
   const [projects, setProjects] = useState([]);
+  const [githubRepos, setGithubRepos] = useState([]);
   const [certificates, setCertificates] = useState([]);
   const [isProjectsLoading, setIsProjectsLoading] = useState(true);
   const [isCertificatesLoading, setIsCertificatesLoading] = useState(true);
+  const [isGithubLoading, setIsGithubLoading] = useState(true);
   const [projectFilter, setProjectFilter] = useState("All");
+  const [projectSearch, setProjectSearch] = useState("");
+  const [activeProject, setActiveProject] = useState(null);
   const [activeCertificate, setActiveCertificate] = useState(null);
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
   const [contactState, setContactState] = useState("idle");
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle("light", theme === "light");
   }, [theme]);
+
+  useEffect(() => {
+    if (!toast) {
+      return undefined;
+    }
+
+    const timer = setTimeout(() => setToast(null), 2600);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   useEffect(() => {
     async function loadProjects() {
@@ -55,6 +73,18 @@ function App() {
       }
     }
 
+    async function loadGithubRepos() {
+      setIsGithubLoading(true);
+      try {
+        const repos = await fetchGithubLatestRepos(profile.githubUsername);
+        setGithubRepos(repos);
+      } catch (error) {
+        setGithubRepos([]);
+      } finally {
+        setIsGithubLoading(false);
+      }
+    }
+
     async function loadCertificates() {
       setIsCertificatesLoading(true);
       try {
@@ -68,6 +98,7 @@ function App() {
     }
 
     loadProjects();
+    loadGithubRepos();
     loadCertificates();
   }, []);
 
@@ -80,11 +111,31 @@ function App() {
   }, [projects]);
 
   const filteredProjects = useMemo(() => {
-    if (projectFilter === "All") {
-      return projects;
-    }
-    return projects.filter((project) => (project.techStack || []).includes(projectFilter));
-  }, [projectFilter, projects]);
+    return projects
+      .filter((project) => (projectFilter === "All" ? true : (project.techStack || []).includes(projectFilter)))
+      .filter((project) => {
+        const query = projectSearch.trim().toLowerCase();
+        if (!query) {
+          return true;
+        }
+
+        return (
+          project.title.toLowerCase().includes(query) ||
+          project.description.toLowerCase().includes(query) ||
+          (project.techStack || []).some((item) => item.toLowerCase().includes(query))
+        );
+      });
+  }, [projectFilter, projectSearch, projects]);
+
+  const featuredProject = useMemo(
+    () => projects.find((project) => project.featured) || projects[0] || null,
+    [projects]
+  );
+
+  const projectList = useMemo(
+    () => filteredProjects.filter((project) => project.title !== featuredProject?.title),
+    [featuredProject?.title, filteredProjects]
+  );
 
   async function handleContactSubmit(event) {
     event.preventDefault();
@@ -94,14 +145,16 @@ function App() {
       await sendContactMessage(contactForm);
       setContactState("success");
       setContactForm({ name: "", email: "", message: "" });
+      setToast({ type: "success", message: "Email sent successfully." });
     } catch (error) {
       setContactState("error");
+      setToast({ type: "error", message: "Failed to send email. Please try again." });
     }
   }
 
-  function handleNavClick(id) {
+  const handleNavClick = useCallback((id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+  }, []);
 
   const sectionAnimation = {
     hidden: { opacity: 0, y: 24 },
@@ -110,6 +163,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-space text-slate-100 transition-colors duration-300">
+      <ScrollProgress />
+      <CustomCursor theme={theme} />
+      <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
         <Navbar theme={theme} onThemeToggle={() => setTheme(theme === "dark" ? "light" : "dark")} onNavClick={handleNavClick} />
 
@@ -204,10 +260,17 @@ function App() {
         >
           <SectionHeading
             label="Projects"
-            title="Dynamic projects powered by API + GitHub"
-            description="Filter by technologies and preview production links, codebases, and architecture choices."
+            title="Production projects with strong engineering fundamentals"
+            description="Filter by tech stack, search quickly, and open each project for full architecture details and screenshots."
           />
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-6 flex flex-wrap gap-3">
+            <input
+              type="text"
+              value={projectSearch}
+              onChange={(event) => setProjectSearch(event.target.value)}
+              placeholder="Search projects"
+              className="min-w-55 rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-sm text-white outline-none ring-cyan-400 focus:ring"
+            />
             {projectFilters.map((filter) => (
               <button
                 key={filter}
@@ -224,12 +287,51 @@ function App() {
             ))}
           </div>
 
+          {!isProjectsLoading && featuredProject && (
+            <div className="mt-8">
+              <p className="mb-3 text-xs uppercase tracking-[0.16em] text-cyan-300">Featured Project</p>
+              <ProjectCard project={featuredProject} onOpen={setActiveProject} />
+            </div>
+          )}
+
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             {isProjectsLoading &&
               Array.from({ length: 4 }).map((_, index) => <SkeletonCard key={`project-skeleton-${index}`} />)}
 
             {!isProjectsLoading &&
-              filteredProjects.map((project) => <ProjectCard key={project.title} project={project} />)}
+              projectList.map((project) => (
+                <ProjectCard key={project.title} project={project} onOpen={setActiveProject} />
+              ))}
+          </div>
+
+          <div className="mt-10">
+            <p className="mb-3 text-xs uppercase tracking-[0.16em] text-cyan-300">Latest GitHub Repositories</p>
+            <div className="grid gap-3 md:grid-cols-2">
+              {isGithubLoading &&
+                Array.from({ length: 2 }).map((_, index) => (
+                  <SkeletonCard key={`repo-skeleton-${index}`} className="h-36" />
+                ))}
+
+              {!isGithubLoading &&
+                githubRepos.map((repo) => (
+                  <Card key={repo.id} className="p-4">
+                    <h4 className="text-lg font-semibold text-white">{repo.name}</h4>
+                    <p className="mt-2 text-sm text-subtle">{repo.description}</p>
+                    <div className="mt-3 flex items-center justify-between text-xs text-slate-300">
+                      <span>{repo.language}</span>
+                      <span>{repo.stars} stars</span>
+                    </div>
+                    <a
+                      className="mt-3 inline-flex items-center gap-2 text-sm text-cyan-300 hover:text-cyan-200"
+                      href={repo.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      View Repository
+                    </a>
+                  </Card>
+                ))}
+            </div>
           </div>
         </motion.section>
 
@@ -312,8 +414,6 @@ function App() {
                 >
                   {contactState === "loading" ? "Sending..." : "Send Message"}
                 </button>
-                {contactState === "success" && <p className="text-sm text-emerald-300">Message sent successfully.</p>}
-                {contactState === "error" && <p className="text-sm text-rose-300">Unable to send message right now.</p>}
               </form>
             </Card>
 
@@ -341,12 +441,20 @@ function App() {
       </div>
 
       <AnimatePresence>
+        {activeProject && (
+          <ProjectDetailsModal project={activeProject} onClose={() => setActiveProject(null)} />
+        )}
+
         {activeCertificate && (
           <Modal onClose={() => setActiveCertificate(null)}>
-            <img
+            <motion.img
               src={activeCertificate.imageUrl}
               alt={activeCertificate.title}
               className="max-h-[75vh] w-full rounded-lg object-contain"
+              loading="lazy"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.25 }}
             />
             <div className="mt-4">
               <h3 className="text-xl font-semibold text-white">{activeCertificate.title}</h3>

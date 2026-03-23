@@ -8,9 +8,12 @@ function normalizeProject(project) {
   return {
     title: project.title,
     description: project.description,
+    longDescription: project.longDescription || project.description,
     techStack: project.techStack || [],
-    githubUrl: project.githubUrl || "#",
-    liveUrl: project.liveUrl || "#"
+    githubUrl: project.githubUrl || "",
+    liveUrl: project.liveUrl || "",
+    screenshots: project.screenshots || [],
+    featured: Boolean(project.featured)
   };
 }
 
@@ -47,6 +50,32 @@ export async function fetchGithubProjects(username) {
       techStack: [repo.language].filter(Boolean),
       githubUrl: repo.html_url,
       liveUrl: repo.homepage || repo.html_url
+    }));
+  } catch (error) {
+    return [];
+  }
+}
+
+export async function fetchGithubLatestRepos(username) {
+  if (!username) {
+    return [];
+  }
+
+  try {
+    const response = await axios.get(`https://api.github.com/users/${username}/repos`, {
+      params: {
+        sort: "updated",
+        per_page: 5
+      }
+    });
+
+    return response.data.map((repo) => ({
+      id: repo.id,
+      name: repo.name,
+      description: repo.description || "Repository synced from GitHub API.",
+      url: repo.html_url,
+      language: repo.language || "Code",
+      stars: repo.stargazers_count || 0
     }));
   } catch (error) {
     return [];

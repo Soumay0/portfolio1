@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 function SectionHeading({ label, title, description }) {
   return (
     <div>
@@ -8,4 +10,4 @@ function SectionHeading({ label, title, description }) {
   );
 }
 
-export default SectionHeading;
+export default memo(SectionHeading);

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { FaNodeJs, FaReact } from "react-icons/fa";
 import { SiExpress, SiJavascript, SiMongodb, SiTailwindcss } from "react-icons/si";
 
@@ -27,4 +28,4 @@ function TechStackIcons({ stack }) {
   );
 }
 
-export default TechStackIcons;
+export default memo(TechStackIcons);
