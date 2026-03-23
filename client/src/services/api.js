@@ -18,8 +18,15 @@ function normalizeProject(project) {
 }
 
 export async function fetchProjects() {
-  const response = await api.get("/api/projects");
-  return (response.data?.data || []).map(normalizeProject);
+  try {
+    const response = await api.get("/api/projects");
+    console.log("[API] Projects fetched:", response.data);
+    return (response.data?.data || []).map(normalizeProject);
+  } catch (error) {
+    console.error("[API] Error fetching projects:", error.message);
+    console.warn("[API] Returning empty projects array");
+    return [];
+  }
 }
 
 export async function fetchCertificates() {
