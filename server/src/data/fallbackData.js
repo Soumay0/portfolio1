@@ -1,20 +1,20 @@
 const fallbackProjects = [
   {
-    title: "Realtime Dev Collaboration Hub",
+    title: "Portfolio Website",
     description:
-      "A collaborative coding platform with live cursors, synchronized edits, and role-based workspaces.",
-    techStack: ["React", "Node.js", "Socket.IO", "MongoDB"],
-    githubUrl: "https://github.com/Soumay0",
-    liveUrl: "https://example.com/dev-collab",
+      "A modern developer portfolio with API-driven sections, smooth animations, and production-ready deployment.",
+    techStack: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
+    githubUrl: "https://github.com/Soumay0/portfolio1",
+    liveUrl: "https://github.com/Soumay0/portfolio1",
     featured: true
   },
   {
-    title: "AI Resume Optimizer",
+    title: "GitHub Projects Showcase",
     description:
-      "A resume enhancement tool that analyzes role keywords and generates targeted bullet rewrites.",
-    techStack: ["React", "Express", "MongoDB", "OpenAI API"],
+      "A dynamic portfolio projects section that automatically syncs repositories via the GitHub API.",
+    techStack: ["React", "Axios", "GitHub API"],
     githubUrl: "https://github.com/Soumay0",
-    liveUrl: "https://example.com/resume-optimizer",
+    liveUrl: "https://github.com/Soumay0",
     featured: true
   }
 ];

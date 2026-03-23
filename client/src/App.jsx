@@ -147,6 +147,11 @@ function App() {
           </div>
 
           <Card className="p-6">
+            <img
+              src="/profile.jpg"
+              alt={`${profile.name} profile`}
+              className="mb-4 h-72 w-full rounded-xl bg-slate-950/70 p-2 object-contain"
+            />
             <p className="text-sm uppercase tracking-[0.18em] text-cyan-200/80">Focus</p>
             <h3 className="mt-2 text-2xl font-medium text-white">Building modern full-stack products</h3>
             <p className="mt-3 text-sm text-slate-300">{profile.bio}</p>

@@ -1,5 +1,5 @@
 export const profile = {
-  name: "Souma",
+  name: "Soumay Pandey",
   role: "Full-Stack Developer",
   location: "India",
   intro:
@@ -8,7 +8,7 @@ export const profile = {
     "From frontend systems to backend services, I design practical products that feel modern, fast, and reliable.",
   about:
     "I enjoy translating ideas into elegant web products using React, Node.js, and cloud-native tooling. My engineering approach balances maintainability, performance, and user delight.",
-  email: "your.email@example.com",
+  email: "soumaypandey1@gmail.com",
   githubUsername: "Soumay0",
   social: {
     github: "https://github.com/Soumay0",
