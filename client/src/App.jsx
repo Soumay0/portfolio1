@@ -157,8 +157,26 @@ function App() {
   }, []);
 
   const sectionAnimation = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0 }
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.25, 0.46, 0.45, 0.94],
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemAnimation = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }
+    }
   };
 
   return (
@@ -175,7 +193,7 @@ function App() {
           initial="hidden"
           animate="visible"
           variants={sectionAnimation}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <div>
             <p className="mb-3 text-sm uppercase tracking-[0.2em] text-cyan-300">{profile.location}</p>
@@ -224,7 +242,7 @@ function App() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={sectionAnimation}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <SectionHeading
             label="About"
@@ -232,20 +250,34 @@ function App() {
             description={profile.about}
           />
           <div className="mt-8 grid gap-5 md:grid-cols-2">
-            <Card className="p-6">
-              <h3 className="text-xl font-semibold text-white">Skills</h3>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {profile.skills.map((skill) => (
-                  <span key={skill} className="rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1 text-xs text-slate-200">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </Card>
-            <Card className="p-6">
-              <h3 className="text-xl font-semibold text-white">Tech Stack</h3>
-              <TechStackIcons stack={profile.techIcons} />
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, delay: 0 }}
+            >
+              <Card className="p-6">
+                <h3 className="text-xl font-semibold text-white">Skills</h3>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {profile.skills.map((skill) => (
+                    <span key={skill} className="rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1 text-xs text-slate-200">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <Card className="p-6">
+                <h3 className="text-xl font-semibold text-white">Tech Stack</h3>
+                <TechStackIcons stack={profile.techIcons} />
+              </Card>
+            </motion.div>
           </div>
         </motion.section>
 
@@ -256,7 +288,7 @@ function App() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
           variants={sectionAnimation}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <SectionHeading
             label="Projects"
@@ -288,10 +320,16 @@ function App() {
           </div>
 
           {!isProjectsLoading && featuredProject && (
-            <div className="mt-8">
+            <motion.div
+              className="mt-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
               <p className="mb-3 text-xs uppercase tracking-[0.16em] text-cyan-300">Featured Project</p>
               <ProjectCard project={featuredProject} onOpen={setActiveProject} />
-            </div>
+            </motion.div>
           )}
 
           <div className="mt-6 grid gap-5 md:grid-cols-2">
@@ -299,8 +337,16 @@ function App() {
               Array.from({ length: 4 }).map((_, index) => <SkeletonCard key={`project-skeleton-${index}`} />)}
 
             {!isProjectsLoading &&
-              projectList.map((project) => (
-                <ProjectCard key={project.title} project={project} onOpen={setActiveProject} />
+              projectList.map((project, index) => (
+                <motion.div
+                  key={project.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <ProjectCard project={project} onOpen={setActiveProject} />
+                </motion.div>
               ))}
           </div>
 
@@ -313,23 +359,31 @@ function App() {
                 ))}
 
               {!isGithubLoading &&
-                githubRepos.map((repo) => (
-                  <Card key={repo.id} className="p-4">
-                    <h4 className="text-lg font-semibold text-white">{repo.name}</h4>
-                    <p className="mt-2 text-sm text-subtle">{repo.description}</p>
-                    <div className="mt-3 flex items-center justify-between text-xs text-slate-300">
-                      <span>{repo.language}</span>
-                      <span>{repo.stars} stars</span>
-                    </div>
-                    <a
-                      className="mt-3 inline-flex items-center gap-2 text-sm text-cyan-300 hover:text-cyan-200"
-                      href={repo.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      View Repository
-                    </a>
-                  </Card>
+                githubRepos.map((repo, index) => (
+                  <motion.div
+                    key={repo.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.1 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <Card className="p-4">
+                      <h4 className="text-lg font-semibold text-white">{repo.name}</h4>
+                      <p className="mt-2 text-sm text-subtle">{repo.description}</p>
+                      <div className="mt-3 flex items-center justify-between text-xs text-slate-300">
+                        <span>{repo.language}</span>
+                        <span>{repo.stars} stars</span>
+                      </div>
+                      <a
+                        className="mt-3 inline-flex items-center gap-2 text-sm text-cyan-300 hover:text-cyan-200"
+                        href={repo.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        View Repository
+                      </a>
+                    </Card>
+                  </motion.div>
                 ))}
             </div>
           </div>
@@ -342,7 +396,7 @@ function App() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
           variants={sectionAnimation}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <SectionHeading
             label="Certificates"
@@ -356,12 +410,19 @@ function App() {
               ))}
 
             {!isCertificatesLoading &&
-              certificates.map((certificate) => (
-                <CertificateCard
+              certificates.map((certificate, index) => (
+                <motion.div
                   key={`${certificate.title}-${certificate.date}`}
-                  certificate={certificate}
-                  onOpen={() => setActiveCertificate(certificate)}
-                />
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <CertificateCard
+                    certificate={certificate}
+                    onOpen={() => setActiveCertificate(certificate)}
+                  />
+                </motion.div>
               ))}
           </div>
         </motion.section>
@@ -373,7 +434,7 @@ function App() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
           variants={sectionAnimation}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <SectionHeading
             label="Contact"
@@ -382,58 +443,72 @@ function App() {
           />
 
           <div className="mt-8 grid gap-5 md:grid-cols-[1.1fr,0.9fr]">
-            <Card className="p-6">
-              <form className="space-y-4" onSubmit={handleContactSubmit}>
-                <input
-                  className="w-full rounded-lg border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white outline-none ring-cyan-400 transition focus:ring"
-                  type="text"
-                  placeholder="Name"
-                  value={contactForm.name}
-                  onChange={(event) => setContactForm({ ...contactForm, name: event.target.value })}
-                  required
-                />
-                <input
-                  className="w-full rounded-lg border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white outline-none ring-cyan-400 transition focus:ring"
-                  type="email"
-                  placeholder="Email"
-                  value={contactForm.email}
-                  onChange={(event) => setContactForm({ ...contactForm, email: event.target.value })}
-                  required
-                />
-                <textarea
-                  className="h-32 w-full rounded-lg border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white outline-none ring-cyan-400 transition focus:ring"
-                  placeholder="Message"
-                  value={contactForm.message}
-                  onChange={(event) => setContactForm({ ...contactForm, message: event.target.value })}
-                  required
-                />
-                <button
-                  type="submit"
-                  disabled={contactState === "loading"}
-                  className="rounded-full border border-cyan-400/50 bg-cyan-500/20 px-6 py-3 text-sm font-medium text-cyan-100 transition hover:bg-cyan-500/30 disabled:opacity-60"
-                >
-                  {contactState === "loading" ? "Sending..." : "Send Message"}
-                </button>
-              </form>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, delay: 0 }}
+            >
+              <Card className="p-6">
+                <form className="space-y-4" onSubmit={handleContactSubmit}>
+                  <input
+                    className="w-full rounded-lg border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white outline-none ring-cyan-400 transition focus:ring"
+                    type="text"
+                    placeholder="Name"
+                    value={contactForm.name}
+                    onChange={(event) => setContactForm({ ...contactForm, name: event.target.value })}
+                    required
+                  />
+                  <input
+                    className="w-full rounded-lg border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white outline-none ring-cyan-400 transition focus:ring"
+                    type="email"
+                    placeholder="Email"
+                    value={contactForm.email}
+                    onChange={(event) => setContactForm({ ...contactForm, email: event.target.value })}
+                    required
+                  />
+                  <textarea
+                    className="h-32 w-full rounded-lg border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-white outline-none ring-cyan-400 transition focus:ring"
+                    placeholder="Message"
+                    value={contactForm.message}
+                    onChange={(event) => setContactForm({ ...contactForm, message: event.target.value })}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    disabled={contactState === "loading"}
+                    className="rounded-full border border-cyan-400/50 bg-cyan-500/20 px-6 py-3 text-sm font-medium text-cyan-100 transition hover:bg-cyan-500/30 disabled:opacity-60"
+                  >
+                    {contactState === "loading" ? "Sending..." : "Send Message"}
+                  </button>
+                </form>
+              </Card>
+            </motion.div>
 
-            <Card className="space-y-4 p-6">
-              <a
-                className="flex items-center gap-3 text-slate-200 hover:text-cyan-200"
-                href={`mailto:${profile.email}`}
-              >
-                <FaEnvelope />
-                {profile.email}
-              </a>
-              <a className="flex items-center gap-3 text-slate-200 hover:text-cyan-200" href={profile.social.github} target="_blank" rel="noreferrer">
-                <FaGithub />
-                GitHub
-              </a>
-              <a className="flex items-center gap-3 text-slate-200 hover:text-cyan-200" href={profile.social.linkedin} target="_blank" rel="noreferrer">
-                <FaLinkedin />
-                LinkedIn
-              </a>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <Card className="space-y-4 p-6">
+                <a
+                  className="flex items-center gap-3 text-slate-200 hover:text-cyan-200"
+                  href={`mailto:${profile.email}`}
+                >
+                  <FaEnvelope />
+                  {profile.email}
+                </a>
+                <a className="flex items-center gap-3 text-slate-200 hover:text-cyan-200" href={profile.social.github} target="_blank" rel="noreferrer">
+                  <FaGithub />
+                  GitHub
+                </a>
+                <a className="flex items-center gap-3 text-slate-200 hover:text-cyan-200" href={profile.social.linkedin} target="_blank" rel="noreferrer">
+                  <FaLinkedin />
+                  LinkedIn
+                </a>
+              </Card>
+            </motion.div>
           </div>
         </motion.section>
 
