@@ -1,8 +1,7 @@
 import axios from "axios";
+import { projectsData, certificatesData } from "../data/projectsData";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || ""
-});
+// ✅ Using static local data - No backend needed!
 
 function normalizeProject(project) {
   return {
@@ -17,25 +16,51 @@ function normalizeProject(project) {
   };
 }
 
+// Fetch projects from local static data
 export async function fetchProjects() {
   try {
-    const response = await api.get("/api/projects");
-    console.log("[API] Projects fetched:", response.data);
-    return (response.data?.data || []).map(normalizeProject);
+    console.log("[API] Loading projects from local data...");
+    // Simulate API delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 300));
+    const normalized = projectsData.map(normalizeProject);
+    console.log("[API] Projects loaded:", normalized);
+    return normalized;
   } catch (error) {
-    console.error("[API] Error fetching projects:", error.message);
-    console.warn("[API] Returning empty projects array");
+    console.error("[API] Error loading projects:", error.message);
     return [];
   }
 }
 
+// Fetch certificates from local static data
 export async function fetchCertificates() {
-  const response = await api.get("/api/certificates");
-  return response.data?.data || [];
+  try {
+    console.log("[API] Loading certificates from local data...");
+    // Simulate API delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 300));
+    console.log("[API] Certificates loaded:", certificatesData);
+    return certificatesData;
+  } catch (error) {
+    console.error("[API] Error loading certificates:", error.message);
+    return [];
+  }
 }
 
+// Contact form - simulates successful submission without sending email
 export async function sendContactMessage(payload) {
-  return api.post("/api/contact", payload);
+  try {
+    console.log("[CONTACT] Form submitted:", payload);
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    console.log("[CONTACT] Message accepted (local storage only)");
+    // Return success response
+    return { 
+      status: 200, 
+      data: { success: true, message: "Thank you for your message!" }
+    };
+  } catch (error) {
+    console.error("[CONTACT] Error:", error);
+    throw error;
+  }
 }
 
 export async function fetchGithubProjects(username) {

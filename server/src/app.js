@@ -9,7 +9,20 @@ const projectsRouter = require("./routes/projects");
 
 const app = express();
 
-app.use(cors());
+// CORS Configuration - Allow Vercel frontend
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",        // Local dev
+    "http://localhost:3000",         // Alternative local
+    "https://yourdomain.vercel.app", // Replace with your actual Vercel URL
+    "https://*.vercel.app"           // All Vercel deployments
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan("dev"));
 
