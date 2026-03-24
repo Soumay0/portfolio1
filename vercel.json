@@ -1,23 +1,21 @@
 {
   "version": 2,
-  "buildCommand": "npm run build --workspace client",
-  "outputDirectory": "client/dist",
   "builds": [
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    },
     {
       "src": "client/package.json",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist"
       }
-    },
-    {
-      "src": "api/*.js",
-      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*?)\\.js$",
+      "src": "/api/(projects|certificates|contact|health)$",
       "dest": "/api/$1.js"
     },
     {
