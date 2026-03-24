@@ -7,7 +7,7 @@ export const projectsData = [
     longDescription:
       "MedConnect is a full-stack appointment booking platform that helps patients discover doctors, create accounts, and manage bookings with minimal friction. The system includes booking and cancellation flows, email confirmations, secure session-based authentication, and robust form validation for reliable data handling.",
     techStack: ["HTML", "CSS", "JavaScript", "PHP", "MySQL"],
-    githubUrl: "https://github.com/Soumay0",
+    githubUrl: "https://github.com/Soumay0/medconnect",
     liveUrl: "",
     screenshots: [
       "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1400&q=80",
@@ -22,7 +22,7 @@ export const projectsData = [
     longDescription:
       "CPU Scheduling Simulator implements FCFS, SJF, Priority, and Round Robin scheduling algorithms with queue simulation, context switching behavior, and performance analytics. It helps compare turnaround time and waiting time metrics across algorithms using structured process input.",
     techStack: ["C", "C++"],
-    githubUrl: "https://github.com/Soumay0",
+    githubUrl: "https://github.com/Soumay0/Cpu_Scheduler_Simulator",
     liveUrl: "",
     screenshots: [
       "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80",
@@ -45,21 +45,7 @@ export const projectsData = [
     ],
     featured: true
   },
-  {
-    title: "Student Management API",
-    description:
-      "RESTful API for student records management with CRUD operations, validation, and scalable backend architecture for academic workflows.",
-    longDescription:
-      "Student Management API is a backend service focused on secure and scalable handling of student records. It provides clean REST endpoints for CRUD operations, validation pipelines, and modular route-controller architecture suitable for academic administration systems.",
-    techStack: ["Node.js", "Express", "MongoDB", "REST API"],
-    githubUrl: "https://github.com/Soumay0",
-    liveUrl: "",
-    screenshots: [
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1516387938699-a93567ec168e?auto=format&fit=crop&w=1400&q=80"
-    ],
-    featured: true
-  }
+  
 ];
 
 export const certificatesData = [
