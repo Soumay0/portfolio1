@@ -1,7 +1,6 @@
-import axios from "axios";
 import { projectsData, certificatesData } from "../data/projectsData";
 
-// ✅ Using static local data - No backend needed!
+// ✅ 100% STATIC DATA - No backend, no axios, no API calls!
 
 function normalizeProject(project) {
   return {
